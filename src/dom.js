@@ -8,6 +8,7 @@ class RPLayoutDOM {
   constructor (ratio = 0.5, mode = consts.MODE_HORIZONTAL) {
     const container = createElement("div");
     addClass(container, consts.CONTAINER_CLASS);
+    css(container, "position", "relative");
     this.container = container;
     this.els = {};
     this.autoUpdate = true;
