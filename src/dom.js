@@ -1,12 +1,13 @@
-import css from "dom-css";
-import elementClass from "element-class";
+import css from "./utils/dom/css";
+import addClass from "./utils/dom/addClass";
+import createElement from "./utils/dom/createElement";
 import consts from "./consts";
 import Pair from "./pair";
 
 class RPLayoutDOM {
   constructor (ratio = 0.5, mode = consts.MODE_HORIZONTAL) {
-    const container = document.createElement("div");
-    elementClass(container).add(consts.CONTAINER_CLASS);
+    const container = createElement("div");
+    addClass(container, consts.CONTAINER_CLASS);
     this.container = container;
     this.els = {};
     this.autoUpdate = true;

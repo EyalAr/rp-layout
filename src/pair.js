@@ -1,26 +1,29 @@
-import css from "dom-css";
-import elementClass from "element-class";
+import css from "./utils/dom/css";
+import addClass from "./utils/dom/addClass";
+import createElement from "./utils/dom/createElement";
+import appendChild from "./utils/dom/appendChild";
+import removeChild from "./utils/dom/removeChild";
 import consts from "./consts";
 import RPLayoutEngine from "./engine";
 
 class Pair {
   constructor (domManager, ratio, mode) {
-    this.A = document.createElement("div");
-    this.B = document.createElement("div");
+    this.A = createElement("div");
+    this.B = createElement("div");
     this.horizontal = mode === consts.MODE_HORIZONTAL;
     this.engine = new RPLayoutEngine(ratio, mode);
     this.domManager = domManager;
     css(this.A, "position", "absolute");
     css(this.B, "position", "absolute");
-    elementClass(this.A).add("rpl-panel-A");
-    elementClass(this.B).add("rpl-panel-B");
+    addClass(this.A, "rpl-panel-A");
+    addClass(this.B, "rpl-panel-B");
   }
 
   addToDom () {
     this.domManager.els[this.engine.A] = this.A;
     this.domManager.els[this.engine.B] = this.B;
-    this.domManager.container.appendChild(this.A);
-    this.domManager.container.appendChild(this.B);
+    appendChild(this.domManager.container, this.A);
+    appendChild(this.domManager.container, this.B);
   }
 
   get left () {
@@ -42,7 +45,7 @@ class Pair {
   split (isA, ratio, mode) {
     const side = isA ? "A" : "B";
     const { domManager, engine } = this;
-    domManager.container.removeChild(this[side]);
+    removeChild(domManager.container, this[side]);
     delete domManager.els[engine[side]];
     const subPair = new Pair(domManager, ratio, mode);
     engine[side] = subPair.engine;
