@@ -7,11 +7,11 @@ import consts from "./consts";
 import RPLayoutEngine from "./engine";
 
 class Pair {
-  constructor (domManager, ratio, mode) {
+  constructor (parent, domManager, ratio, mode) {
     this.A = createElement("div");
     this.B = createElement("div");
     this.horizontal = mode === consts.MODE_HORIZONTAL;
-    this.engine = new RPLayoutEngine(ratio, mode);
+    this.engine = new RPLayoutEngine(parent ? parent.engine : null, ratio, mode);
     this.domManager = domManager;
     css(this.A, "position", "absolute");
     css(this.B, "position", "absolute");
@@ -47,7 +47,7 @@ class Pair {
     const { domManager, engine } = this;
     removeChild(domManager.container, this[side]);
     delete domManager.els[engine[side]];
-    const subPair = new Pair(domManager, ratio, mode);
+    const subPair = new Pair(this, domManager, ratio, mode);
     engine[side] = subPair.engine;
     this[side] = subPair;
     subPair.addToDom();

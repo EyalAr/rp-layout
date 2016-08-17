@@ -16,9 +16,10 @@ function adjustSubLayout (subLayout, container) {
 }
 
 class RPLayoutEngine {
-  constructor (ratio = 0.5, mode = consts.MODE_HORIZONTAL) {
-    this.mode = mode;
+  constructor (parent, ratio = 0.5, mode = consts.MODE_HORIZONTAL) {
+    this.horizontal = mode === consts.MODE_HORIZONTAL;
     this.ratio = ratio;
+    this.parent = parent;
     this.A = getId();
     this.B = getId();
   }
@@ -31,21 +32,45 @@ class RPLayoutEngine {
   }
 
   setMode (mode) {
-    this.mode = mode;
+    this.horizontal = mode === consts.MODE_HORIZONTAL;
+  }
+
+  getAbsoluteWidth () {
+    if (!this.parent) return 1;
+    if (!this.parent.horizontal) return this.parent.getAbsoluteWidth();
+    return this.parent.getAbsoluteWidth() * (this.parent.A === this ? this.parent.ratio : (1 - this.parent.ratio));
+  }
+
+  getAbsoluteHeight () {
+    if (!this.parent) return 1;
+    if (this.parent.horizontal) return this.parent.getAbsoluteHeight();
+    return this.parent.getAbsoluteHeight() * (this.parent.A === this ? this.parent.ratio : (1 - this.parent.ratio));
+  }
+
+  getAbsoluteLeft () {
+    if (!this.parent) return 0;
+    if (!this.parent.horizontal) return this.parent.getAbsoluteLeft();
+    return this.parent.getAbsoluteLeft() + (this.parent.A === this ? 0 : this.parent.ratio * this.parent.getAbsoluteWidth());
+  }
+
+  getAbsoluteTop () {
+    if (!this.parent) return 0;
+    if (this.parent.horizontal) return this.parent.getAbsoluteTop();
+    return this.parent.getAbsoluteTop() + (this.parent.A === this ? 0 : this.parent.ratio * this.parent.getAbsoluteHeight());
   }
 
   getLayout () {
     const A = {
       x: 0,
       y: 0,
-      width: this.mode === consts.MODE_HORIZONTAL ? this.ratio : 1,
-      height: this.mode === consts.MODE_VERTICAL ? this.ratio : 1
+      width: this.horizontal ? this.ratio : 1,
+      height: !this.horizontal ? this.ratio : 1
     };
     const B = {
-      x: this.mode === consts.MODE_HORIZONTAL ? this.ratio : 0,
-      y: this.mode === consts.MODE_VERTICAL ? this.ratio : 0,
-      width: this.mode === consts.MODE_HORIZONTAL ? (1 - this.ratio) : 1,
-      height: this.mode === consts.MODE_VERTICAL ? (1 - this.ratio) : 1
+      x: this.horizontal ? this.ratio : 0,
+      y: !this.horizontal ? this.ratio : 0,
+      width: this.horizontal ? (1 - this.ratio) : 1,
+      height: !this.horizontal ? (1 - this.ratio) : 1
     };
     const panels = [];
     if (this.A instanceof RPLayoutEngine) {
@@ -65,17 +90,17 @@ class RPLayoutEngine {
 
   toJSON () {
     return {
-      mode: this.mode,
+      mode: this.horizontal ? consts.MODE_HORIZONTAL : consts.MODE_VERTICAL,
       ratio: this.ratio,
       A: this.A instanceof RPLayoutEngine ? this.A.toJSON() : this.A,
       B: this.B instanceof RPLayoutEngine ? this.B.toJSON() : this.B
     }
   }
 
-  static fromJSON (layout) {
-    const l = new RPLayoutEngine(layout.ratio, layout.mode);
-    l.A = typeof layout.A === "string" ? layout.A : RPLayoutEngine.fromJSON(layout.A);
-    l.B = typeof layout.B === "string" ? layout.B : RPLayoutEngine.fromJSON(layout.B);
+  static fromJSON (layout, parent = null) {
+    const l = new RPLayoutEngine(parent, layout.ratio, layout.mode);
+    l.A = typeof layout.A === "string" ? layout.A : RPLayoutEngine.fromJSON(layout.A, l);
+    l.B = typeof layout.B === "string" ? layout.B : RPLayoutEngine.fromJSON(layout.B, l);
     return l;
   }
 }

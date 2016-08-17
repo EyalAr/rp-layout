@@ -12,7 +12,7 @@ class RPLayoutDOM {
     this.container = container;
     this.els = {};
     this.autoUpdate = true;
-    this.pair = new Pair(this, ratio, mode);
+    this.pair = new Pair(null, this, ratio, mode);
     this.pair.addToDom();
   }
 
