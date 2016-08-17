@@ -1,12 +1,20 @@
 {
   "name": "rp-layout",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.0",
+  "description": "Recursive Pairs grid layout",
   "main": "webpack.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EyalAr/rp-layout.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EyalAr/rp-layout/issues"
+  },
+  "homepage": "https://github.com/EyalAr/rp-layout",
+  "author": "Eyal Arubas <eyalarubas@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "bezier-easing": "^2.0.3",
