@@ -1,33 +1,20 @@
-import css from "./utils/dom/css";
-import addClass from "./utils/dom/addClass";
-import createElement from "./utils/dom/createElement";
-import consts from "./consts";
+import consts from "../consts";
+import connectors from "../connectors";
 import Pair from "./pair";
 
-class RPLayoutDOM {
+class RPLayoutContainer {
   constructor (ratio = 0.5, mode = consts.MODE_HORIZONTAL) {
-    const container = createElement("div");
-    addClass(container, consts.CONTAINER_CLASS);
-    css(container, "position", "relative");
-    this.container = container;
+    this.container = connectors.createContainer();
     this.els = {};
     this.autoUpdate = true;
     this.pair = new Pair(null, this, ratio, mode);
-    this.pair.addToDom();
-  }
-
-  getPair () {
-    return this.pair;
+    this.pair.addToContainer();
   }
 
   update () {
     this.pair.engine.getLayout().forEach(({ id, x, y, width, height }) => {
-      css(this.els[id], {
-        top: (y * 100) + "%",
-        left: (x * 100) + "%",
-        width: (width * 100) + "%",
-        height: (height * 100) + "%"
-      });
+      connectors.setPosition(this.els[id], x, y);
+      connectors.setSize(this.els[id], width, height);
     });
   }
 
@@ -44,6 +31,7 @@ class RPLayoutDOM {
   }
 }
 
-Object.assign(RPLayoutDOM, consts);
+Object.assign(RPLayoutContainer, consts);
+Object.assign(RPLayoutContainer, connectors);
 
-export default RPLayoutDOM;
+export default RPLayoutContainer;

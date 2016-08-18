@@ -1,13 +1,13 @@
 import raf from "raf";
 import consts from "../consts";
-import Pair from "../pair";
+import Pair from "../pair/pair";
 
 const noop = () => {};
 
 Pair.prototype.animate = function (ratio, duration, cb = noop, motion = consts.BEZIER_LINEAR) {
-  const domManager = this.domManager;
-  const oldAutoUpdate = domManager.autoUpdate;
-  domManager.autoUpdate = true;
+  const containerManager = this.containerManager;
+  const oldAutoUpdate = containerManager.autoUpdate;
+  containerManager.autoUpdate = true;
   var timeLeft = duration;
   var timeElapsed = 0;
   var timePrevTick = Date.now();
@@ -30,7 +30,7 @@ Pair.prototype.animate = function (ratio, duration, cb = noop, motion = consts.B
 
   function cancel () {
     raf.cancel(raf_h);
-    domManager.autoUpdate = oldAutoUpdate;
+    containerManager.autoUpdate = oldAutoUpdate;
     cb(timeElapsed);
   }
 }

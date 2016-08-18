@@ -1,29 +1,21 @@
-import css from "./utils/dom/css";
-import addClass from "./utils/dom/addClass";
-import createElement from "./utils/dom/createElement";
-import appendChild from "./utils/dom/appendChild";
-import removeChild from "./utils/dom/removeChild";
-import consts from "./consts";
+import consts from "../consts";
+import connectors from "../connectors";
 import RPLayoutEngine from "./engine";
 
 class Pair {
-  constructor (parent, domManager, ratio, mode) {
-    this.A = createElement("div");
-    this.B = createElement("div");
+  constructor (parent, containerManager, ratio, mode) {
+    this.A = connectors.createPanel();
+    this.B = connectors.createPanel();
     this.horizontal = mode === consts.MODE_HORIZONTAL;
     this.engine = new RPLayoutEngine(parent ? parent.engine : null, ratio, mode);
-    this.domManager = domManager;
-    css(this.A, "position", "absolute");
-    css(this.B, "position", "absolute");
-    addClass(this.A, "rpl-panel-A");
-    addClass(this.B, "rpl-panel-B");
+    this.containerManager = containerManager;
   }
 
-  addToDom () {
-    this.domManager.els[this.engine.A] = this.A;
-    this.domManager.els[this.engine.B] = this.B;
-    appendChild(this.domManager.container, this.A);
-    appendChild(this.domManager.container, this.B);
+  addToContainer () {
+    this.containerManager.els[this.engine.A] = this.A;
+    this.containerManager.els[this.engine.B] = this.B;
+    connectors.addPanel(this.containerManager.container, this.A);
+    connectors.addPanel(this.containerManager.container, this.B);
   }
 
   get left () {
@@ -44,14 +36,14 @@ class Pair {
 
   split (isA, ratio, mode) {
     const side = isA ? "A" : "B";
-    const { domManager, engine } = this;
-    removeChild(domManager.container, this[side]);
-    delete domManager.els[engine[side]];
-    const subPair = new Pair(this, domManager, ratio, mode);
+    const { containerManager, engine } = this;
+    connectors.removePanel(containerManager.container, this[side]);
+    delete containerManager.els[engine[side]];
+    const subPair = new Pair(this, containerManager, ratio, mode);
     engine[side] = subPair.engine;
     this[side] = subPair;
-    subPair.addToDom();
-    if (domManager.autoUpdate) domManager.update();
+    subPair.addToContainer();
+    if (containerManager.autoUpdate) containerManager.update();
     return subPair;
   }
 
@@ -117,13 +109,13 @@ class Pair {
 
   setRatio (ratio) {
     this.engine.setRatio(ratio);
-    if (this.domManager.autoUpdate) this.domManager.update();
+    if (this.containerManager.autoUpdate) this.containerManager.update();
   }
 
   setMode (mode) {
     this.engine.setMode(mode);
     this.horizontal = mode === consts.MODE_HORIZONTAL;
-    if (this.domManager.autoUpdate) this.domManager.update();
+    if (this.containerManager.autoUpdate) this.containerManager.update();
   }
 }
 

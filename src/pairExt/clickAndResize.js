@@ -1,23 +1,23 @@
-import Pair from "../pair";
+import Pair from "../pair/pair";
 
 const trueFilter = () => true;
 
 Pair.prototype.clickAndResize = function (anchor, filter = trueFilter) {
-  const domManager = this.domManager;
-  const oldAutoUpdate = domManager.autoUpdate;
+  const containerManager = this.containerManager;
+  const oldAutoUpdate = containerManager.autoUpdate;
 
   anchor.addEventListener("mousedown", e => {
-    domManager.autoUpdate = true;
+    containerManager.autoUpdate = true;
     window.addEventListener("mousemove", mouseMoveHandler);
     window.addEventListener("mouseup", e => {
-      domManager.autoUpdate = oldAutoUpdate;
+      containerManager.autoUpdate = oldAutoUpdate;
       window.removeEventListener("mousemove", mouseMoveHandler);
     });
   });
 
   const mouseMoveHandler = (e) => {
     const pos = this.horizontal ? e.clientX : e.clientY;
-    const containerRect = this.domManager.container.getBoundingClientRect();
+    const containerRect = this.containerManager.container.getBoundingClientRect();
     const pairStarts = this.engine[this.horizontal ? "getAbsoluteLeft" : "getAbsoluteTop"]() *
       containerRect[this.horizontal ? "width" : "height"] +
       containerRect[this.horizontal ? "left" : "top"];

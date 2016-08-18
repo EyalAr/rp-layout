@@ -1,4 +1,4 @@
-import consts from "./consts";
+import consts from "../consts";
 
 const getId = () => Math.random().toString(36).substr(2);
 
