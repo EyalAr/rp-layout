@@ -10,10 +10,11 @@ module.exports = {
     },
     output: {
         filename: "dist/index.js",
-        library: "RPLayout",
+        library: "Layman",
         libraryTarget: "umd"
     },
     plugins: [
+        new webpack.optimize.UglifyJsPlugin(),
         new webpack.SourceMapDevToolPlugin(
             '[file].map', null, "../[resource-path]", "../[resource-path]")
     ]
